@@ -1,6 +1,6 @@
 ; Define a fallback version for when you build locally
-#ifndef AppVersion
-  #define AppVersion "1.0.0"
+#ifndef MyAppVersion
+  #define MyAppVersion "1.0.0"
 #endif
 
 #define MyAppName "Vista"
