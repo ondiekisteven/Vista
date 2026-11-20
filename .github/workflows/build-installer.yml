@@ -1,0 +1,50 @@
+name: Build Windows Installer
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-installer:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Build app folder with PyInstaller
+        run: |
+          pyinstaller --name Vista --onedir --windowed --icon assets\icon.ico --add-data "lyrics.json;." --add-data "assets;assets" main.py
+
+      - name: Compile Installer with Inno Setup
+        shell: pwsh
+        run: |
+          $version = if ($env:GITHUB_REF_TYPE -eq 'tag') { $env:GITHUB_REF_NAME } else { "dev" }
+          & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" /DAppVersion=$version installer.iss
+
+      - name: Upload Build Artifact (for testing manual runs)
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-installer
+          path: installer_output/*.exe
+
+      - name: Publish to GitHub Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: installer_output/*.exe

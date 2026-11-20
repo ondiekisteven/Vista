@@ -1,10 +1,14 @@
+; Define a fallback version for when you build locally
+#ifndef AppVersion
+  #define AppVersion "1.0.0"
+#endif
+
 #define MyAppName "Vista"
-#define MyAppVersion "1.0.0"
 #define MyAppPublisher "Steven Ondieki"
 #define MyAppExeName "Vista.exe"
 
 [Setup]
-AppId={{3D8F02F1-8D5D-4F77-B0C7-3D5BFA7B88C}
+AppId={3D8F02F1-8D5D-4F77-B0C7-3D5BFA7B88C}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
 AppPublisher={#MyAppPublisher}
@@ -13,7 +17,7 @@ DefaultDirName={autopf}\{#MyAppName}
 DefaultGroupName={#MyAppName}
 
 OutputDir=installer
-OutputBaseFilename=VistaSetup
+OutputBaseFilename={#MyAppName}_Setup_{#AppVersion}
 
 Compression=lzma2
 SolidCompression=yes
