@@ -1,0 +1,11 @@
+title: Vista
+name: Vista
+description: A simple worship presentation app for churches
+theme: minima
+
+header_pages:
+  - index.md
+  - getting-started.md
+  - features.md
+  - user-guide.md
+  - faq.md

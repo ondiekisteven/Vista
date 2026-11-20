@@ -1,0 +1,1 @@
+pyinstaller --name Vista --onefile --windowed --icon assets\icon.ico --add-data "lyrics.json;." --add-data "assets;assets" main.py

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Vista | Worship Presentation App</title>
+    <meta
+      name="description"
+      content="Vista is a Windows worship presentation app for churches, designed for simple song display and live projection."
+    />
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #07111f;
+        --panel: #111c2f;
+        --text: #f5f7fb;
+        --muted: #9fb0c9;
+        --accent: #4f8cff;
+        --accent-2: #7cc4ff;
+      }
+
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: "Segoe UI", Arial, sans-serif;
+        background: linear-gradient(135deg, var(--bg), #14243b);
+        color: var(--text);
+        line-height: 1.6;
+      }
+
+      a { color: var(--accent-2); text-decoration: none; }
+      a:hover { text-decoration: underline; }
+
+      .container {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 24px;
+      }
+
+      .hero {
+        padding: 64px 0 32px;
+      }
+
+      .hero h1 {
+        font-size: clamp(2rem, 4vw, 3.2rem);
+        margin: 0 0 12px;
+      }
+
+      .hero p {
+        font-size: 1.1rem;
+        color: var(--muted);
+        max-width: 760px;
+      }
+
+      .buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-top: 24px;
+      }
+
+      .button {
+        display: inline-block;
+        padding: 12px 18px;
+        border-radius: 999px;
+        background: var(--accent);
+        color: white;
+        font-weight: 600;
+      }
+
+      .button.secondary {
+        background: transparent;
+        border: 1px solid #36516f;
+      }
+
+      .grid {
+        display: grid;
+        gap: 18px;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        margin-top: 28px;
+      }
+
+      .card {
+        background: rgba(17, 28, 47, 0.9);
+        border: 1px solid #24364f;
+        border-radius: 16px;
+        padding: 20px;
+      }
+
+      .card h2 {
+        margin-top: 0;
+        font-size: 1.1rem;
+      }
+
+      .card p { color: var(--muted); margin-bottom: 0; }
+
+      footer {
+        padding: 40px 0 20px;
+        color: var(--muted);
+        font-size: 0.95rem;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="container">
+      <section class="hero">
+        <h1>Vista</h1>
+        <p>
+          Vista is a Windows worship presentation app for churches. It helps a service team search songs,
+          preview lyrics, and send them to a second screen with a clear, readable output.
+        </p>
+        <div class="buttons">
+          <a class="button" href="getting-started.html">Get Started</a>
+          <a class="button secondary" href="features.html">See Features</a>
+          <a class="button secondary" href="user-guide.html">Read the User Guide</a>
+        </div>
+      </section>
+
+      <section class="grid">
+        <article class="card">
+          <h2>Built for live worship</h2>
+          <p>Keep the workflow simple during a service with a focused interface for song selection and presentation.</p>
+        </article>
+        <article class="card">
+          <h2>Local-first</h2>
+          <p>Run the app without requiring a cloud account or internet access while you present.</p>
+        </article>
+        <article class="card">
+          <h2>Readable output</h2>
+          <p>Adjust size, background, and contrast so the congregation can see the lyrics clearly.</p>
+        </article>
+        <article class="card">
+          <h2>Easy to publish</h2>
+          <p>This page is ready to be hosted as a public landing page for links, downloads, or church portals.</p>
+        </article>
+      </section>
+
+      <footer>
+        <p>More help: <a href="faq.html">FAQ</a> · <a href="README.html">Publishing Notes</a></p>
+      </footer>
+    </main>
+  </body>
+</html>
