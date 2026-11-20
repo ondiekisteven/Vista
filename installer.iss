@@ -8,7 +8,7 @@
 #define MyAppExeName "Vista.exe"
 
 [Setup]
-AppId={3D8F02F1-8D5D-4F77-B0C7-3D5BFA7B88C}
+AppId={{3D8F02F1-8D5D-4F77-B0C7-3D5BFA7B88C}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
 AppPublisher={#MyAppPublisher}
