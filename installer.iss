@@ -17,7 +17,7 @@ DefaultDirName={autopf}\{#MyAppName}
 DefaultGroupName={#MyAppName}
 
 OutputDir=installer
-OutputBaseFilename={#MyAppName}_Setup_{#AppVersion}
+OutputBaseFilename={#MyAppName}_Setup_{#MyAppVersion}
 
 Compression=lzma2
 SolidCompression=yes
