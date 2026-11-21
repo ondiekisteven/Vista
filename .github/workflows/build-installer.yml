@@ -35,16 +35,17 @@ jobs:
         shell: pwsh
         run: |
           $version = if ($env:GITHUB_REF_TYPE -eq 'tag') { $env:GITHUB_REF_NAME } else { "dev" }
-          & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" /DAppVersion=$version installer.iss
+          & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" /DMyAppVersion=$version installer.iss
 
       - name: Upload Build Artifact (for testing manual runs)
         uses: actions/upload-artifact@v4
         with:
           name: windows-installer
-          path: installer_output/*.exe
+          path: installer/*.exe
+          if-no-files-found: error
 
       - name: Publish to GitHub Release
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
         with:
-          files: installer_output/*.exe
+          files: installer/*.exe
