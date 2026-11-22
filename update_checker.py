@@ -17,11 +17,9 @@ def get_latest_release():
         RELEASE_API_URL,
         headers={
             "Accept": "application/vnd.github+json",
-            "User-Agent": "Vista-update-checker",
         },
     )
     with urlopen(request, timeout=8) as response:
-        print(response.read().decode("utf-8"))
         release = json.loads(response.read().decode("utf-8"))
 
     tag = release.get("tag_name", "")
@@ -48,5 +46,4 @@ class UpdateCheckWorker(QObject):
             tag, url, available = get_latest_release()
             self.finished.emit(tag, url, available)
         except (URLError, TimeoutError, ValueError, json.JSONDecodeError) as error:
-            print(str(error))
             self.failed.emit(str(error))
