@@ -1,8 +1,8 @@
 import json
 import shutil
 
-from PySide6.QtCore import Qt
-from PySide6.QtGui import QColor, QCloseEvent, QFont, QIcon
+from PySide6.QtCore import QThread, QTimer, Qt, QUrl
+from PySide6.QtGui import QColor, QCloseEvent, QDesktopServices, QFont, QIcon
 from PySide6.QtWidgets import (
     QCheckBox,
     QColorDialog,
@@ -18,10 +18,13 @@ from PySide6.QtWidgets import (
     QVBoxLayout,
     QHBoxLayout,
     QSplitter,
+    QMessageBox,
 )
 
 from app_settings import APP_NAME, DATA_DIR, load_settings, save_settings
 from helpers import resource_path
+from app_version import APP_VERSION
+from update_checker import UpdateCheckWorker
 
 
 CONTROLLER_STYLE = """
@@ -195,10 +198,14 @@ class ControllerWindow(QWidget):
 
         self.announcementMode = False
         self.currentSlideOnOutputIndex = None
+        self.update_check_thread = None
+        self.update_check_worker = None
+        self.update_check_automatic = False
 
         self.build_ui()
 
         self.load_library()
+        QTimer.singleShot(1500, lambda: self.check_for_updates(automatic=True))
 
     ####################################################################
     # UI
@@ -389,6 +396,16 @@ class ControllerWindow(QWidget):
         title.setObjectName("SectionTitle")
         panelLayout.addWidget(title)
 
+        update_title = QLabel(f"Vista {APP_VERSION}")
+        update_title.setObjectName("MutedText")
+        panelLayout.addWidget(update_title)
+        self.updateStatus = QLabel("Updates are checked when Vista starts.")
+        self.updateStatus.setObjectName("MutedText")
+        panelLayout.addWidget(self.updateStatus)
+        self.checkUpdatesButton = QPushButton("Check for updates")
+        self.checkUpdatesButton.clicked.connect(self.check_for_updates)
+        panelLayout.addWidget(self.checkUpdatesButton)
+
         form = QFormLayout()
         form.setFieldGrowthPolicy(QFormLayout.AllNonFixedFieldsGrow)
         form.setLabelAlignment(Qt.AlignRight)
@@ -451,6 +468,58 @@ class ControllerWindow(QWidget):
         self.update_background_controls()
 
         return page
+
+    def check_for_updates(self, automatic=False):
+        if self.update_check_thread and self.update_check_thread.isRunning():
+            return
+
+        self.update_check_automatic = automatic
+        self.checkUpdatesButton.setEnabled(False)
+        self.updateStatus.setText("Checking GitHub for updates...")
+        self.update_check_thread = QThread(self)
+        self.update_check_worker = UpdateCheckWorker()
+        self.update_check_worker.moveToThread(self.update_check_thread)
+        self.update_check_thread.started.connect(self.update_check_worker.run)
+        self.update_check_worker.finished.connect(self.handle_update_check_result)
+        self.update_check_worker.failed.connect(self.handle_update_check_error)
+        self.update_check_worker.finished.connect(self.update_check_thread.quit)
+        self.update_check_worker.failed.connect(self.update_check_thread.quit)
+        self.update_check_thread.finished.connect(self.update_check_worker.deleteLater)
+        self.update_check_thread.start()
+
+    def handle_update_check_result(self, version, url, available):
+        self.update_check_finished(version, url, available, self.update_check_automatic)
+
+    def handle_update_check_error(self, error):
+        self.update_check_failed(error, self.update_check_automatic)
+
+    def update_check_finished(self, version, url, available, automatic):
+        self.checkUpdatesButton.setEnabled(True)
+        if available:
+            self.updateStatus.setText(f"Update available: {version}")
+            answer = QMessageBox.information(
+                self,
+                "Vista update available",
+                f"Vista {version} is available. Open the GitHub release page to download it?",
+                QMessageBox.Open | QMessageBox.Cancel,
+                QMessageBox.Open,
+            )
+            if answer == QMessageBox.Open:
+                QDesktopServices.openUrl(QUrl(url))
+        else:
+            self.updateStatus.setText("Vista is up to date.")
+            if not automatic:
+                QMessageBox.information(self, "No updates", "You're using the latest version of Vista.")
+
+    def update_check_failed(self, _error, automatic):
+        self.checkUpdatesButton.setEnabled(True)
+        self.updateStatus.setText("Could not check for updates.")
+        if not automatic:
+            QMessageBox.warning(
+                self,
+                "Update check failed",
+                "Vista could not reach GitHub. Check your internet connection and try again.",
+            )
 
     ####################################################################
     # Library

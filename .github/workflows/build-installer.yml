@@ -29,6 +29,8 @@ jobs:
 
       - name: Build app folder with PyInstaller
         run: |
+          $version = if ($env:GITHUB_REF_TYPE -eq 'tag') { $env:GITHUB_REF_NAME.TrimStart('v') } else { "1.0.0" }
+          Set-Content -Path app_version.py -Value "APP_VERSION = `"$version`""
           pyinstaller --name Vista --onedir --windowed --icon assets\icon.ico --add-data "lyrics.json;." --add-data "assets;assets" main.py
 
       - name: Compile Installer with Inno Setup
