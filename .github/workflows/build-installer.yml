@@ -10,6 +10,46 @@ permissions:
   contents: write
 
 jobs:
+  build-linux:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Build Linux application with PyInstaller
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          if [[ "$GITHUB_REF_TYPE" != "tag" ]]; then VERSION="1.0.0"; fi
+          printf 'APP_VERSION = "%s"\n' "$VERSION" > app_version.py
+          pyinstaller --name Vista --onedir --windowed --add-data "lyrics.json:." --add-data "assets:assets" main.py
+
+      - name: Package Linux application
+        run: tar -czf Vista-linux-x86_64.tar.gz -C dist Vista
+
+      - name: Upload Build Artifact (for testing manual runs)
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux-application
+          path: Vista-linux-x86_64.tar.gz
+          if-no-files-found: error
+
+      - name: Publish to GitHub Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: Vista-linux-x86_64.tar.gz
+
   build-installer:
     runs-on: windows-latest
 

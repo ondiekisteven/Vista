@@ -344,7 +344,7 @@ class ControllerWindow(QWidget):
         buttonsLayout.addWidget(addAnnouncementButton)
 
         leftLayout.addWidget(self.announcementInput)
-        leftLayout.addLayout(buttonsLayout)
+        # leftLayout.addLayout(buttonsLayout)
 
 
         return left

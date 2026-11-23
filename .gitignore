@@ -5,3 +5,4 @@ venv
 installer/
 upload_to_registry.txt
 .vscode
+lenv
